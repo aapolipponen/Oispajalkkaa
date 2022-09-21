@@ -48,12 +48,12 @@ function GameManager(size, InputManager, Actuator, ScoreManager) {
         
         
     }
-    else {
-        //ei tarpeeksi kännissä katkolle!
-       // alert("Olet ihan liian selvin päin katkolle!");
-           snd = new Audio("/buzz.mp3");  
-      snd.play();
-    }
+   //Äänet ei käyttössä RN
+      //else {
+            //Katko ei mahdollinen
+           //snd = new Audio("/buzz.mp3");  
+      //snd.play();
+   // }
     
     
   };
@@ -75,11 +75,12 @@ function GameManager(size, InputManager, Actuator, ScoreManager) {
     this.won         = false;
     this.keepPlaying = false;
     
+      //Äänet ei käytössä RN
       //preload
-      snd = [];
-      snd[0] = new Audio("/none1.mp3");
-      snd[1] = new Audio("/none2.mp3");
-      snd[2] = new Audio("/none3.mp3");
+      //snd = [];
+      //snd[0] = new Audio("/none1.mp3");
+      //snd[1] = new Audio("/none2.mp3");
+      //snd[2] = new Audio("/none3.mp3");
   
     // Add the initial tiles
     this.addStartTiles();
