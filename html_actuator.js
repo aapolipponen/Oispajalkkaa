@@ -180,10 +180,10 @@ function HTMLActuator() {
               // }            
   
   
-        }
+    //    }
     
-    snd.play();
-  };
+  //  snd.play();
+//  };
   
   HTMLActuator.prototype.updateBestScore = function (bestScore) {
     this.bestContainer.textContent = bestScore;
