@@ -183,7 +183,7 @@ function HTMLActuator() {
     //    }
     
   //  snd.play();
-//  };
+};
   
   HTMLActuator.prototype.updateBestScore = function (bestScore) {
     this.bestContainer.textContent = bestScore;
