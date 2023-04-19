@@ -131,22 +131,22 @@ function HTMLActuator() {
     
   
      var snd;
-    
-    if (difference > 0) {
+   //Äänet pois käytöstä RN 
+   // if (difference > 0) {
   
-                  var a =  Math.floor((Math.random() * 4) + 1);
-              if (a == 1) {
-                  snd = new Audio("/open1.mp3");  
-              }
-              if (a == 2) {
-                  snd = new Audio("/open2.mp3");  
-              }
-              if (a == 3) {
-                  snd = new Audio("/open3.mp3");  
-              }  
-              if (a == 4) {
-                  snd = new Audio("/open4.mp3");  
-              }   
+         //         var a =  Math.floor((Math.random() * 4) + 1);
+         //     if (a == 1) {
+         //         snd = new Audio("/open1.mp3");  
+         //     }
+         //     if (a == 2) {
+         //         snd = new Audio("/open2.mp3");  
+         //     }
+         //     if (a == 3) {
+         //         snd = new Audio("/open3.mp3");  
+         //     }  
+         // if (a == 4) {
+         //       snd = new Audio("/open4.mp3");  
+         //     }   
               
       var addition = document.createElement("div");
       addition.classList.add("score-addition");
@@ -165,18 +165,19 @@ function HTMLActuator() {
       messageElement.setAttribute('style', styleString);
       this.dogeSays.appendChild(messageElement);
       
-    } else 
-        {
-              var a =  Math.floor((Math.random() * 3) + 1);
-              if (a == 1) {
-                  snd = new Audio("/none1.mp3");  
-              }
-              if (a == 2) {
-                  snd = new Audio("/none2.mp3");  
-              }
-              if (a == 3) {
-                  snd = new Audio("/none3.mp3");  
-              }            
+  //Äänet pois rn
+      //  } else 
+    //    {
+      //        var a =  Math.floor((Math.random() * 3) + 1);
+        //      if (a == 1) {
+          //        snd = new Audio("/none1.mp3");  
+          //    }
+            //  if (a == 2) {
+             //     snd = new Audio("/none2.mp3");  
+             // }
+            //  if (a == 3) {
+              //    snd = new Audio("/none3.mp3");  
+              // }            
   
   
         }
@@ -218,8 +219,9 @@ function HTMLActuator() {
   
   HTMLActuator.prototype.goKatko = function () {
       
-      snd = new Audio("/audio/katkolle.mp3");  
-      snd.play();
+     //Äänet pois rn
+      //snd = new Audio("/audio/katkolle.mp3");  
+   //   snd.play();
       this.clearContainer(this.scoreContainer);    
       this.clearContainer(this.katkoViesti);    
       this.clearContainer(this.dogeSays);    
@@ -232,7 +234,7 @@ function HTMLActuator() {
       
       //var message = "KATKOLLE!";
       var messageElement = document.createElement("img");
-      messageElement.setAttribute('src',"/img/katko.png");
+      messageElement.setAttribute('src',"katko.png");
       //messageElement.textContent = message;
       //var left = 'left: 37%;';
       //var top = 'top: 10%;';
