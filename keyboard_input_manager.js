@@ -1,136 +1,101 @@
-function KeyboardInputManager() {
+class KeyboardInputManager {
+  constructor() {
     this.events = {};
-  
     this.listen();
   }
-  
-  KeyboardInputManager.prototype.on = function (event, callback) {
-    if (!this.events[event]) {
-      this.events[event] = [];
-    }
+
+  on(event, callback) {
+    this.events[event] = this.events[event] || [];
     this.events[event].push(callback);
-  };
-  
-  KeyboardInputManager.prototype.emit = function (event, data) {
-    var callbacks = this.events[event];
-    if (callbacks) {
-      callbacks.forEach(function (callback) {
-        callback(data);
-      });
-    }
-  };
-  
-  KeyboardInputManager.prototype.listen = function () {
-    var self = this;
-  
-    var map = {
-      38: 0, // Up
-      39: 1, // Right
-      40: 2, // Down
-      37: 3, // Left
-      75: 0, // vim keybindings
-      76: 1,
-      74: 2,
-      72: 3,
-      87: 0, // W
-      68: 1, // D
-      83: 2, // S
-      65: 3  // A
+  }
+
+  emit(event, data) {
+    this.events[event]?.forEach(callback => callback(data));
+  }
+
+  listen() {
+    const map = new Map([
+      [38, 0], [39, 1], [40, 2], [37, 3],  // Arrows
+      [75, 0], [76, 1], [74, 2], [72, 3],  // Vim
+      [87, 0], [68, 1], [83, 2], [65, 3]   // WASD
+    ]);
+
+    document.addEventListener("keydown", event => {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      
+      const direction = map.get(event.which);
+      if (direction !== undefined) {
+        event.preventDefault();
+        this.emit("move", direction);
+      }
+
+      if (event.which === 32) this.restart(event);
+    });
+
+    const addHandler = (selector, event, handler) => {
+      document.querySelector(selector).addEventListener(event, handler);
     };
-  
-    document.addEventListener("keydown", function (event) {
-      var modifiers = event.altKey || event.ctrlKey || event.metaKey ||
-                      event.shiftKey;
-      var mapped    = map[event.which];
-  
-      if (!modifiers) {
-        if (mapped !== undefined) {
-          event.preventDefault();
-          self.emit("move", mapped);
-        }
-  
-        if (event.which === 32) self.restart.bind(self)(event);
-      }
-    });
-  
-    var retry = document.querySelector(".retry-button");
-    retry.addEventListener("click", this.restart.bind(this));
-    retry.addEventListener("touchend", this.restart.bind(this));
-  
-    var keepPlaying = document.querySelector(".keep-playing-button");
-    keepPlaying.addEventListener("click", this.keepPlaying.bind(this));
-    keepPlaying.addEventListener("touchend", this.keepPlaying.bind(this));
-    
-    var showInfo = document.querySelector(".info-container");
-    showInfo.addEventListener("click", this.showInfo.bind(this));
-    showInfo.addEventListener("touchend", this.showInfo.bind(this));
-    
-    var goKatko = document.querySelector(".katko-container");
-    goKatko.addEventListener("click", this.goKatko.bind(this));
-    goKatko.addEventListener("touchend", this.goKatko.bind(this));
-    
-    // var hideInfo = document.querySelector(".hide-info");
-    // hideInfo.addEventListener("click", this.hideInfo.bind(this));
-    // hideInfo.addEventListener("touchend", this.hideInfo.bind(this));
-    
-    
-    // Listen to swipe events
-    var touchStartClientX, touchStartClientY;
-    var gameContainer = document.getElementsByClassName("game-container")[0];
-  
-    gameContainer.addEventListener("touchstart", function (event) {
+
+    addHandler(".retry-button", "click", this.restart.bind(this));
+    addHandler(".retry-button", "touchend", this.restart.bind(this));
+    addHandler(".keep-playing-button", "click", this.keepPlaying.bind(this));
+    addHandler(".keep-playing-button", "touchend", this.keepPlaying.bind(this));
+    addHandler(".info-container", "click", this.showInfo.bind(this));
+    addHandler(".info-container", "touchend", this.showInfo.bind(this));
+    addHandler(".katko-container", "click", this.goKatko.bind(this));
+    addHandler(".katko-container", "touchend", this.goKatko.bind(this));
+
+    const gameContainer = document.querySelector(".game-container");
+    let touchStart = { x: 0, y: 0 };
+
+    gameContainer.addEventListener("touchstart", event => {
       if (event.touches.length > 1) return;
-  
-      touchStartClientX = event.touches[0].clientX;
-      touchStartClientY = event.touches[0].clientY;
+      touchStart = { 
+        x: event.touches[0].clientX, 
+        y: event.touches[0].clientY 
+      };
       event.preventDefault();
     });
-  
-    gameContainer.addEventListener("touchmove", function (event) {
-      event.preventDefault();
-    });
-  
-    gameContainer.addEventListener("touchend", function (event) {
+
+    gameContainer.addEventListener("touchend", event => {
       if (event.touches.length > 0) return;
-  
-      var dx = event.changedTouches[0].clientX - touchStartClientX;
-      var absDx = Math.abs(dx);
-  
-      var dy = event.changedTouches[0].clientY - touchStartClientY;
-      var absDy = Math.abs(dy);
-  
+      
+      const dx = event.changedTouches[0].clientX - touchStart.x;
+      const dy = event.changedTouches[0].clientY - touchStart.y;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
       if (Math.max(absDx, absDy) > 10) {
-        // (right : left) : (down : up)
-        self.emit("move", absDx > absDy ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0));
+        const direction = absDx > absDy 
+          ? (dx > 0 ? 1 : 3) 
+          : (dy > 0 ? 2 : 0);
+        this.emit("move", direction);
       }
     });
-  };
-  
-  KeyboardInputManager.prototype.restart = function (event) {
-    event.preventDefault();
+  }
+
+  restart(event) {
+    event?.preventDefault();
     this.emit("restart");
-  };
-  
-  KeyboardInputManager.prototype.keepPlaying = function (event) {
-    event.preventDefault();
+  }
+
+  keepPlaying(event) {
+    event?.preventDefault();
     this.emit("keepPlaying");
-  };
-  
-  KeyboardInputManager.prototype.showInfo = function (event) {
-    event.preventDefault();
+  }
+
+  showInfo(event) {
+    event?.preventDefault();
     this.emit("showInfo");
-  };
-  
-  KeyboardInputManager.prototype.hideInfo = function (event) {
-    event.preventDefault();
+  }
+
+  hideInfo(event) {
+    event?.preventDefault();
     this.emit("hideInfo");
-  };
-  
-  KeyboardInputManager.prototype.goKatko = function (event) {
-    event.preventDefault();
+  }
+
+  goKatko(event) {
+    event?.preventDefault();
     this.emit("goKatko");
-  };
-  
-  
-  
-  
+  }
+}

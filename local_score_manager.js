@@ -1,49 +1,33 @@
-window.fakeStorage = {
-    _data: {},
-  
-    setItem: function (id, val) {
-      return this._data[id] = String(val);
-    },
-  
-    getItem: function (id) {
-      return this._data.hasOwnProperty(id) ? this._data[id] : undefined;
-    },
-  
-    removeItem: function (id) {
-      return delete this._data[id];
-    },
-  
-    clear: function () {
-      return this._data = {};
-    }
-  };
-  
-  function LocalScoreManager() {
-    this.key     = "bestScore";
-  
-    var supported = this.localStorageSupported();
-    this.storage = supported ? window.localStorage : window.fakeStorage;
+const fakeStorage = {
+  _data: {},
+  setItem(id, val) { return this._data[id] = String(val) },
+  getItem(id) { return this._data[id] },
+  removeItem(id) { return delete this._data[id] },
+  clear() { return this._data = {} }
+};
+
+class LocalScoreManager {
+  constructor() {
+    this.key = "bestScore";
+    this.storage = this.localStorageSupported ? window.localStorage : fakeStorage;
   }
-  
-  LocalScoreManager.prototype.localStorageSupported = function () {
-    var testKey = "test";
-    var storage = window.localStorage;
-  
+
+  get localStorageSupported() {
     try {
-      storage.setItem(testKey, "1");
-      storage.removeItem(testKey);
+      const testKey = "__test__";
+      window.localStorage.setItem(testKey, testKey);
+      window.localStorage.removeItem(testKey);
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
-  };
-  
-  LocalScoreManager.prototype.get = function () {
-    return this.storage.getItem(this.key) || 0;
-  };
-  
-  LocalScoreManager.prototype.set = function (score) {
+  }
+
+  get() {
+    return Number(this.storage.getItem(this.key)) || 0;
+  }
+
+  set(score) {
     this.storage.setItem(this.key, score);
-  };
-  
-  
+  }
+}
